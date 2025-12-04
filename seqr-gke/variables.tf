@@ -23,6 +23,12 @@ variable "default_pool_node_count" {
   description = "The number of nodes that should be contained in the default pool"
 }
 
+variable "deletion_protection" {
+  description = "Whether Terraform is prevented from destroying the cluster"
+  type        = string
+  default     = true
+}
+
 variable "remove_default_node_pool" {
   type        = bool
   default     = true
@@ -81,4 +87,30 @@ variable "default_pool_image_type" {
   type        = string
   description = "The GKE image to use for the default node pool. Should generally be COS_CONTAINERD unless you specifically need something else."
   default     = "COS_CONTAINERD"
+}
+
+
+variable "gke_control_plane_authorized_networks" {
+  description = "The IPv4 CIDR ranges that should be allowed to connect to the control plane"
+  type        = list(string)
+  default     = []
+}
+
+variable "enable_dns_endpoint_config" {
+  description = "Disables or Enables the DNS endpoint for the GKE control plane"
+  type        = bool
+  default     = true
+}
+
+
+variable "vpc_network_name" {
+  description = "The name of the VPC network that the GKE cluster should reside in"
+  type        = string
+  default     = "default"
+}
+
+variable "vpc_subnet_name" {
+  description = "The name of the VPC network subnet that the GKE cluster nodes should reside in"
+  type        = string
+  default     = "default"
 }
