@@ -4,8 +4,8 @@ resource "google_container_cluster" "cluster" {
   name                        = var.cluster_name
   project                     = var.project
   monitoring_service          = "monitoring.googleapis.com/kubernetes"
-  network                     = "projects/${var.project}/global/networks/default"
-  subnetwork                  = "projects/${var.project}/regions/us-central1/subnetworks/default"
+  network                     = "projects/${var.project}/global/networks/${var.vpc_network_name}"
+  subnetwork                  = "projects/${var.project}/regions/australia-southeast1/subnetworks/${var.vpc_subnet_name}"
   cluster_ipv4_cidr           = var.cluster_ipv4_cidr
   default_max_pods_per_node   = "110"
   enable_intranode_visibility = "false"
@@ -19,6 +19,8 @@ resource "google_container_cluster" "cluster" {
   networking_mode             = var.networking_mode
   remove_default_node_pool    = var.remove_default_node_pool
 
+  deletion_protection = var.deletion_protection
+
   addons_config {
     cloudrun_config {
       disabled = "true"
@@ -30,6 +32,10 @@ resource "google_container_cluster" "cluster" {
 
     network_policy_config {
       disabled = "false"
+    }
+
+    gcp_filestore_csi_driver_config {
+      enabled = "true"
     }
   }
 
@@ -74,60 +80,12 @@ resource "google_container_cluster" "cluster" {
   }
 
   master_authorized_networks_config {
-    cidr_blocks {
-      cidr_block = "69.173.127.192/27"
-    }
 
-    cidr_blocks {
-      cidr_block = "69.173.112.0/21"
-    }
-
-    cidr_blocks {
-      cidr_block = "69.173.96.0/20"
-    }
-
-    cidr_blocks {
-      cidr_block = "69.173.127.232/29"
-    }
-
-    cidr_blocks {
-      cidr_block = "69.173.126.0/24"
-    }
-
-    cidr_blocks {
-      cidr_block = "69.173.124.0/23"
-    }
-
-    cidr_blocks {
-      cidr_block = "69.173.127.0/25"
-    }
-
-    cidr_blocks {
-      cidr_block = "69.173.64.0/19"
-    }
-
-    cidr_blocks {
-      cidr_block = "69.173.127.228/32"
-    }
-
-    cidr_blocks {
-      cidr_block = "69.173.127.224/30"
-    }
-
-    cidr_blocks {
-      cidr_block = "69.173.127.240/28"
-    }
-
-    cidr_blocks {
-      cidr_block = "69.173.127.230/31"
-    }
-
-    cidr_blocks {
-      cidr_block = "69.173.127.128/26"
-    }
-
-    cidr_blocks {
-      cidr_block = "69.173.120.0/22"
+    dynamic "cidr_blocks" {
+      for_each = toset(var.gke_control_plane_authorized_networks)
+      content {
+        cidr_block = cidr_blocks.key
+      }
     }
   }
 
@@ -149,6 +107,17 @@ resource "google_container_cluster" "cluster" {
   }
 
   resource_labels = var.gke_resource_labels
+
+  control_plane_endpoints_config {
+    dns_endpoint_config {
+      allow_external_traffic = var.enable_dns_endpoint_config
+    }
+  }
+
+  private_cluster_config {
+    enable_private_nodes    = true
+  }
+
 }
 
 # Default node pool configuration
