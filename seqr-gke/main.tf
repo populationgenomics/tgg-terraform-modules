@@ -37,6 +37,10 @@ resource "google_container_cluster" "cluster" {
     gcp_filestore_csi_driver_config {
       enabled = "true"
     }
+
+    gcs_fuse_csi_driver_config {
+      enabled = "true"
+    }
   }
 
   binary_authorization {
