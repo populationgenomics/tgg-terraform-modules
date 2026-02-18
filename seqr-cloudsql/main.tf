@@ -47,7 +47,6 @@ resource "google_sql_database_instance" "postgres_cloudsql_instance" {
 
     ip_configuration {
       ipv4_enabled    = "true"
-      require_ssl     = "true"
       private_network = var.enable_private_network ? var.private_network_id : null
     }
 
