@@ -1,6 +1,6 @@
 resource "google_compute_network" "network" {
   name                    = var.network_name
-  auto_create_subnetworks = false
+  auto_create_subnetworks = true
 }
 
 resource "google_compute_subnetwork" "subnet" {
@@ -46,3 +46,4 @@ resource "google_compute_router_nat" "router_nat" {
     filter = "ERRORS_ONLY"
   }
 }
+

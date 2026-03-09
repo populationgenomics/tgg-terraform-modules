@@ -33,3 +33,24 @@ variable "backup_enabled" {
   type    = string
   default = "true"
 }
+
+variable "database_location" {
+  type        = string
+  description = "The GCP region where your database runs."
+  default = "us-central1-b"
+}
+
+variable "database_tier" {
+  type        = string
+  description = "The GCP database tier."
+  default = "db-custom-2-4096"
+}
+
+variable "private_network_id" {
+  type    = string
+  default = ""
+}
+
+variable "postgres_password" {
+  type    = string
+}

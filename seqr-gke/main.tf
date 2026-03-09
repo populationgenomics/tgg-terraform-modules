@@ -5,9 +5,9 @@ resource "google_container_cluster" "cluster" {
   project                     = var.project
   monitoring_service          = "monitoring.googleapis.com/kubernetes"
   network                     = "projects/${var.project}/global/networks/${var.vpc_network_name}"
-  subnetwork                  = "projects/${var.project}/regions/australia-southeast1/subnetworks/${var.vpc_subnet_name}"
   cluster_ipv4_cidr           = var.cluster_ipv4_cidr
-  default_max_pods_per_node   = "110"
+  # Cannot set max pods constraint on cluster for route-based clusters.
+  # default_max_pods_per_node   = "110"
   enable_intranode_visibility = "false"
   enable_kubernetes_alpha     = "false"
   enable_legacy_abac          = "false"
@@ -35,6 +35,10 @@ resource "google_container_cluster" "cluster" {
     }
 
     gcp_filestore_csi_driver_config {
+      enabled = "true"
+    }
+
+    gcs_fuse_csi_driver_config {
       enabled = "true"
     }
   }
@@ -135,7 +139,7 @@ resource "google_container_node_pool" "default_pool" {
 
   node_config {
     disk_size_gb    = var.default_pool_disk_size
-    disk_type       = "pd-standard"
+    disk_type       = var.default_pool_disk_type
     image_type      = var.default_pool_image_type
     local_ssd_count = "0"
     machine_type    = var.default_pool_machine_type

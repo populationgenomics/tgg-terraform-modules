@@ -47,6 +47,12 @@ variable "default_pool_disk_size" {
   default     = "100"
 }
 
+variable "default_pool_disk_type" {
+  type        = string
+  description = "The type of the default pool disk in gb"
+  default     = "pd-standard"
+}
+
 # Default to daily 3AM-7AM Eastern time maintenance window
 variable "recurring_maint_windows" {
   type = list(map(string))
