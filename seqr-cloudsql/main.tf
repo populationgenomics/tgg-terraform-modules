@@ -63,6 +63,21 @@ resource "google_sql_database_instance" "postgres_cloudsql_instance" {
     # pricing_plan = "PER_USE"
     tier         = var.database_tier
     edition = "ENTERPRISE" # Change the edition
+
+    database_flags {
+      name  = "cloudsql.enable_pgaudit"
+      value = "on"
+    }
+
+    database_flags {
+      name  = "cloudsql.iam_authentication"
+      value = "on"
+    }
+
+    database_flags {
+      name  = "pgaudit.log"
+      value = "all"
+    }
   }
 }
 
